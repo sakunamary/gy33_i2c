@@ -102,8 +102,9 @@ uint16_t GY33_I2C::read16(uint8_t reg)
 /**************************************************************************/
 GY33_I2C::GY33_I2C()
 {
-    _MCUInitialised = false;
+_MCUInitialised = false;
 }
+
 
 /*========================================================================*/
 /*                           PUBLIC FUNCTIONS                             */
@@ -126,8 +127,6 @@ boolean GY33_I2C::begin(void)
             return false;
         }
         /* Make sure we're actually connected */
-
-        _MCUInitialised = true;
          return true;
     } else {
     Serial.println("GY33 I2C false...");
