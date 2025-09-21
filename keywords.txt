@@ -1,0 +1,25 @@
+#######################################
+# Syntax Coloring Map For GY33_I2C
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+GY33_I2C	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################	
+
+begin	KEYWORD2
+getRawData	KEYWORD2
+getData	KEYWORD2
+calculateColorTemperature	KEYWORD2
+calculateLux	KEYWORD2
+setConfig	KEYWORD2
+getConfig   KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
