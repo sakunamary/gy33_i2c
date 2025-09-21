@@ -36,6 +36,7 @@
 #ifndef _GY33_I2C_H_
 #define _GY33_I2C_H_
 
+#include <Arduino.h>
 #include <Wire.h>     
 //#include <Adafruit_I2CDevice.h>
 
