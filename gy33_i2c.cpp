@@ -25,73 +25,6 @@
 #include "gy33_i2c.h"
 
 /*========================================================================*/
-/*                          PRIVATE FUNCTIONS                             */
-/*========================================================================*/
-
-/**************************************************************************/
-/*!
-    @brief  Implements missing powf function
-*/
-/**************************************************************************/
-float powf(const float x, const float y)
-{
-    return (float)(pow((double)x, (double)y));
-}
-
-/**************************************************************************/
-/*!
-    @brief  Writes a register and an 8 bit value over I2C
-*/
-/**************************************************************************/
-uint8_t GY33_I2C::write8(uint8_t reg, uint8_t val)
-{
-    Wire.beginTransmission(MCU_ADDRESS);
-    Wire.write(reg);
-    Wire.write(val & 0xFF);
-    return Wire.endTransmission();
-}
-
-/**************************************************************************/
-/*!
-    @brief  Reads an 8 bit value over I2C
-*/
-/**************************************************************************/
-uint8_t GY33_I2C::read8(uint8_t reg)
-{
-    Wire.beginTransmission(MCU_ADDRESS);
-    Wire.write(reg);
-    Wire.endTransmission();
-    Wire.requestFrom(MCU_ADDRESS, 1);
-    if (Wire.available())
-    {
-        return Wire.read();
-    }
-    return 0;
-    ;
-}
-
-/**************************************************************************/
-/*!
-    @brief  Reads a 16 bit values over I2C
-*/
-/**************************************************************************/
-uint16_t GY33_I2C::read16(uint8_t reg)
-{
-    uint16_t x;
-    uint16_t t;
-
-    Wire.beginTransmission(MCU_ADDRESS);
-    Wire.write(reg);
-    Wire.endTransmission();
-    Wire.requestFrom(MCU_ADDRESS, 2);
-    t = Wire.read();
-    x = Wire.read();
-    x <<= 8;
-    x |= t;
-    return x;
-}
-
-/*========================================================================*/
 /*                            CONSTRUCTORS                                */
 /*========================================================================*/
 
@@ -100,11 +33,24 @@ uint16_t GY33_I2C::read16(uint8_t reg)
     Constructor
 */
 /**************************************************************************/
-GY33_I2C::GY33_I2C()
+GY33_I2C::GY33_I2C(uint8_t addr, uint8_t sda, uint8_t scl, uint32_t freq)
 {
-_MCUInitialised = false;
-}
+    uint8_t _MCUAddress = addr;
+    uint8_t x, error;
+    Wire.begin(sda, scl, freq);
+    delay(10);
+    Wire.beginTransmission(_MCUAddress);
+    error = Wire.endTransmission();
+    if (error == 0)
+    {
+        Serial.println("GY-33 I2C device found");
+    } else {
+        Serial.println("No GY-33 I2C device found ... check your wiring?");
+    }
+    delay(10);
 
+    _MCUInitialised = false;
+}
 
 /*========================================================================*/
 /*                           PUBLIC FUNCTIONS                             */
@@ -116,22 +62,20 @@ _MCUInitialised = false;
     doing anything else)
 */
 /**************************************************************************/
-boolean GY33_I2C::begin(void)
+boolean GY33_I2C::begin()
 {
-    if (Wire.begin())
+    uint8_t x, error;
+
+    /* Set default integration time and gain */
+    x = read8(MCU_CONFIG);
+    Serial.println(x, HEX);
+    if (x != 0x10)
     {
-        uint8_t x = read8(MCU_CONFIG);
-        Serial.println(x, HEX);
-        if (x != 0x10)
-        {
-            return false;
-        }
-        /* Make sure we're actually connected */
-         return true;
-    } else {
-    Serial.println("GY33 I2C false...");
-    return false;
+        return false;
     }
+    /* Make sure we're actually connected */
+    _MCUInitialised = true;
+    return true;
 }
 
 /**************************************************************************/
@@ -228,4 +172,70 @@ uint8_t GY33_I2C::getConfig(void)
 
     return read8(MCU_CONFIG);
 }
-  
+
+/*========================================================================*/
+/*                          PRIVATE FUNCTIONS                             */
+/*========================================================================*/
+
+/**************************************************************************/
+/*!
+    @brief  Implements missing powf function
+*/
+/**************************************************************************/
+float powf(const float x, const float y)
+{
+    return (float)(pow((double)x, (double)y));
+}
+
+/**************************************************************************/
+/*!
+    @brief  Writes a register and an 8 bit value over I2C
+*/
+/**************************************************************************/
+uint8_t GY33_I2C::write8(uint8_t reg, uint8_t val)
+{
+    Wire.beginTransmission(MCU_ADDRESS);
+    Wire.write(reg);
+    Wire.write(val & 0xFF);
+    return Wire.endTransmission();
+}
+
+/**************************************************************************/
+/*!
+    @brief  Reads an 8 bit value over I2C
+*/
+/**************************************************************************/
+uint8_t GY33_I2C::read8(uint8_t reg)
+{
+    Wire.beginTransmission(MCU_ADDRESS);
+    Wire.write(reg);
+    Wire.endTransmission();
+    Wire.requestFrom(MCU_ADDRESS, 1);
+    if (Wire.available())
+    {
+        return Wire.read();
+    }
+    return 0;
+    ;
+}
+
+/**************************************************************************/
+/*!
+    @brief  Reads a 16 bit values over I2C
+*/
+/**************************************************************************/
+uint16_t GY33_I2C::read16(uint8_t reg)
+{
+    uint16_t x;
+    uint16_t t;
+
+    Wire.beginTransmission(MCU_ADDRESS);
+    Wire.write(reg);
+    Wire.endTransmission();
+    Wire.requestFrom(MCU_ADDRESS, 2);
+    t = Wire.read();
+    x = Wire.read();
+    x <<= 8;
+    x |= t;
+    return x;
+}

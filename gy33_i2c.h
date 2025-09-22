@@ -42,7 +42,7 @@
 
 #define MCU_ADDRESS          (0x5A)
 
-#define SCL_SPEED            100
+#define SCL_SPEED            100000
 #define SCL_STRETCH_TIMEOUT  50000
 
 #define MCU_LED_OFF          (0xA0)
@@ -79,8 +79,8 @@
 
 class GY33_I2C {
  public:
-  GY33_I2C();
- 
+  GY33_I2C(uint8_t addr = MCU_ADDRESS,uint8_t sda = -1,uint8_t scl = -1,uint32_t freq = SCL_SPEED);
+
   boolean  begin(void);
   void     getRawData(uint16_t *r, uint16_t *g, uint16_t *b, uint16_t *c, uint16_t *lux, uint16_t *ct);
   void     getData(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *c, uint8_t *conf);
