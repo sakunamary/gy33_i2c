@@ -35,11 +35,11 @@
 /**************************************************************************/
 GY33_I2C::GY33_I2C(uint8_t addr, uint8_t sda, uint8_t scl, uint32_t freq)
 {
-    uint8_t _MCUAddress = addr;
-    uint8_t x, error;
+
+    uint8_t error;
     Wire.begin(sda, scl, freq);
     delay(10);
-    Wire.beginTransmission(_MCUAddress);
+    Wire.beginTransmission(addr);
     error = Wire.endTransmission();
     if (error == 0)
     {
@@ -64,7 +64,7 @@ GY33_I2C::GY33_I2C(uint8_t addr, uint8_t sda, uint8_t scl, uint32_t freq)
 /**************************************************************************/
 boolean GY33_I2C::begin()
 {
-    uint8_t x, error;
+    uint8_t x;
 
     /* Set default integration time and gain */
     x = read8(MCU_CONFIG);
