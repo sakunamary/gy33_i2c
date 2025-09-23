@@ -33,21 +33,21 @@
     Constructor
 */
 /**************************************************************************/
-GY33_I2C::GY33_I2C(uint8_t addr, uint8_t sda, uint8_t scl, uint32_t freq)
+GY33_I2C::GY33_I2C()
 {
 
-    uint8_t error;
-    Wire.begin(sda, scl, freq);
-    delay(10);
-    Wire.beginTransmission(addr);
-    error = Wire.endTransmission();
-    if (error == 0)
-    {
-        Serial.println("GY-33 I2C device found");
-    } else {
-        Serial.println("No GY-33 I2C device found ... check your wiring?");
-    }
-    delay(10);
+    // uint8_t error;
+    // Wire.begin(sda, scl, freq);
+    // delay(10);
+    // Wire.beginTransmission(addr);
+    // error = Wire.endTransmission();
+    // if (error == 0)
+    // {
+    //     Serial.println("GY-33 I2C device found");
+    // } else {
+    //     Serial.println("No GY-33 I2C device found ... check your wiring?");
+    // }
+    // delay(10);
 
     _MCUInitialised = false;
 }
@@ -68,7 +68,7 @@ boolean GY33_I2C::begin()
 
     /* Set default integration time and gain */
     x = read8(MCU_CONFIG);
-    Serial.println(x, HEX);
+   // Serial.println(x, HEX);
     if (x != 0x10)
     {
         return false;
@@ -96,16 +96,17 @@ void GY33_I2C::getRawData(uint16_t *r, uint16_t *g, uint16_t *b, uint16_t *c, ui
     *ct = read16(MCU_CTDATAH);
 }
 
-void GY33_I2C::getData(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *c, uint8_t *conf)
+void GY33_I2C::getData(uint8_t r, uint8_t g, uint8_t b, uint8_t c, uint8_t conf)
 {
     if (!_MCUInitialised)
         begin();
 
-    *r = read8(MCU_RDATA);
-    *g = read8(MCU_GDATA);
-    *b = read8(MCU_BDATA);
-    *c = read8(MCU_COLDATA);
-    *conf = read8(MCU_CONFIG);
+    r = read8(MCU_RDATA);
+    g = read8(MCU_GDATA);
+    b = read8(MCU_BDATA);
+    c = read8(MCU_COLDATA);
+    conf = read8(MCU_CONFIG);
+     Serial.println(r, BIN);
 }
 
 /**************************************************************************/
@@ -159,11 +160,13 @@ uint16_t GY33_I2C::calculateLux(uint16_t r, uint16_t g, uint16_t b)
     return (uint16_t)illuminance;
 }
 
-void GY33_I2C::setConfig(uint8_t high, uint8_t low)
+uint8_t GY33_I2C::setConfig(uint8_t high, uint8_t low)
 {
-    Serial.println("GY-33: ");
-    Serial.println(high | low, HEX);
-    write8(MCU_CONFIG, high | low);
+    uint8_t error;
+    Serial.print("GY-33: ");
+    Serial.println(high | low, BIN);
+    error = write8(MCU_CONFIG, high | low);
+    return error;
 }
 uint8_t GY33_I2C::getConfig(void)
 {
@@ -214,9 +217,9 @@ uint8_t GY33_I2C::read8(uint8_t reg)
     if (Wire.available())
     {
         return Wire.read();
+    } else {
+ return 0;
     }
-    return 0;
-    ;
 }
 
 /**************************************************************************/

@@ -16,6 +16,12 @@
         "vector": "cpp",
         "format": "cpp",
         "cstdint": "cpp",
-        "print": "cpp"
-    }
+        "print": "cpp",
+        "forward_list": "cpp",
+        "__locale": "cpp",
+        "istream": "cpp"
+    },
+    "idf.openOcdConfigs": [
+        "board/esp32s3-builtin.cfg"
+    ]
 }

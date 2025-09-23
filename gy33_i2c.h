@@ -79,17 +79,17 @@
 
 class GY33_I2C {
  public:
-  GY33_I2C(uint8_t addr = MCU_ADDRESS,uint8_t sda = -1,uint8_t scl = -1,uint32_t freq = SCL_SPEED);
+  GY33_I2C();
 
   boolean  begin(void);
   void     getRawData(uint16_t *r, uint16_t *g, uint16_t *b, uint16_t *c, uint16_t *lux, uint16_t *ct);
-  void     getData(uint8_t *r, uint8_t *g, uint8_t *b, uint8_t *c, uint8_t *conf);
+  void     getData(uint8_t r, uint8_t g, uint8_t b, uint8_t c, uint8_t conf);
   uint16_t calculateColorTemperature(uint16_t r, uint16_t g, uint16_t b);
   uint16_t calculateLux(uint16_t r, uint16_t g, uint16_t b);
   uint8_t  write8 (uint8_t reg, uint8_t val);
   uint8_t  read8 (uint8_t reg);
   uint16_t read16 (uint8_t reg);
-  void     setConfig(uint8_t h, uint8_t l);
+  uint8_t  setConfig(uint8_t h, uint8_t l);
   uint8_t  getConfig(void);
  private:
   boolean _MCUInitialised;
